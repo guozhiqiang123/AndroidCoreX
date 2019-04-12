@@ -1,0 +1,102 @@
+//判断该模块是library还是app
+apply from: rootProject.file('auto-dependences.gradle')
+//ARetrofit插件（https://github.com/yifei8/ARetrofit）
+//apply plugin: 'com.sjtu.yifei.autoinject'
+//XAOP
+//apply plugin: 'com.xuexiang.xaop'
+//apply plugin: 'kotlin-android'
+
+//该文件是公共配置，除了公用库不能引用外，业务组件均可引用
+//为什么公用库不能使用该插件？====>因为公用库会在本文件的dependencies中添加，如果公用库再使用该插件，岂不是循环依赖了？
+android {
+    compileSdkVersion rootProject.ext.android["compileSdkVersion"]
+    defaultConfig {
+        if (project.ext.runAsApp) {
+            //在开发自己项目的时候，这里改成自己命名的applicationId
+            applicationId "com.gzq.android.core"
+        }
+        minSdkVersion rootProject.ext.android["minSdkVersion"]
+        targetSdkVersion rootProject.ext.android["targetSdkVersion"]
+        versionCode rootProject.ext.android["versionCode"]
+        versionName rootProject.ext.android["versionName"]
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        ndk {
+            abiFilters "arm64-v8a", "x86"
+        }
+    }
+
+//    //在local.properties中配置自己项目的签名文件
+//    signingConfigs {
+//        debug {
+//            storeFile file(RELEASE_STORE_FILE)
+//            storePassword RELEASE_STORE_PASSWORD
+//            keyAlias RELEASE_KEY_ALIAS
+//            keyPassword RELEASE_KEY_PASSWORD
+//        }
+//        release {
+//            storeFile file(RELEASE_STORE_FILE)
+//            storePassword RELEASE_STORE_PASSWORD
+//            keyAlias RELEASE_KEY_ALIAS
+//            keyPassword RELEASE_KEY_PASSWORD
+//        }
+//    }
+
+    buildTypes {
+        debug {
+            lintOptions {
+                checkReleaseBuilds false
+                abortOnError false
+            }
+//            signingConfig signingConfigs.debug
+        }
+        release {
+            if (project.name == "app") {
+                minifyEnabled true
+                shrinkResources true
+                zipAlignEnabled true
+                debuggable true
+                proguardFiles rootProject.file('proguard-system-common.pro'),
+                        rootProject.file('proguard-second-party.pro'),
+                        rootProject.file('proguard-third-party.pro'),
+                        rootProject.file('proguard-module.pro')
+            }
+
+            lintOptions {
+                checkReleaseBuilds false
+                abortOnError false
+            }
+//            signingConfig signingConfigs.release
+        }
+    }
+
+    //指定使用JDK1.8
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    //开启databinding的功能
+    dataBinding {
+        enabled = true
+    }
+}
+repositories {
+    flatDir {
+        //将aar文件全部存放在根目录下的aar文件夹中，方便统一管理
+        dirs rootProject.file('aar')
+    }
+}
+dependencies {
+    //kotlin
+//    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    //路由框架ARetrofit（https://github.com/yifei8/ARetrofit）
+//    annotationProcessor rootProject.ext.dependencies["routerfit-complier"]
+    //为每个组件引用公共模块
+//    api project(':lib-resource')
+    //glide
+//    annotationProcessor rootProject.ext.dependencies["glide-compiler"]
+    //XAOP
+//    annotationProcessor rootProject.ext.dependencies["xaop"]
+
+    implementation rootProject.ext.dependencies["appcompat-v7"]
+}
