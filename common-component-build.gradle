@@ -13,7 +13,7 @@ android {
     defaultConfig {
         if (project.ext.runAsApp) {
             //在开发自己项目的时候，这里改成自己命名的applicationId
-            applicationId "com.gzq.android.core"
+            applicationId "com.gzq.androidcorex"
         }
         minSdkVersion rootProject.ext.android["minSdkVersion"]
         targetSdkVersion rootProject.ext.android["targetSdkVersion"]

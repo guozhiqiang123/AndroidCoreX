@@ -54,7 +54,7 @@ public class App extends Application {
         initGlobalConfig();
 
         //Toast初始化
-        T.it().init(this);
+        T.instance().init(this);
         //初始化屏幕适配器
         ObjectFactory.INSTANCE.initAutoSize(getGlobalConfig());
         //初始化LeakCanary
